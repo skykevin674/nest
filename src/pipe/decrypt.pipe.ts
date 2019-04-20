@@ -1,4 +1,4 @@
-import { Injectable, PipeTransform, ArgumentMetadata } from '@nestjs/common';
+import { Injectable, PipeTransform, ArgumentMetadata, Logger } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as NodeRsa from 'node-rsa';
@@ -15,6 +15,7 @@ export class DecryptPipe implements PipeTransform<string> {
         const privateStr = privatePem.toString();
         this.privateKey = new NodeRsa(privateStr);
       }
+      Logger.debug(value);
       return JSON.parse(this.privateKey.decrypt(value, 'utf8'));
     }
     return value;

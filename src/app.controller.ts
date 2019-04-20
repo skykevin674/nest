@@ -1,11 +1,10 @@
 import { Controller, Get, Param, Post, Body, Logger, UseGuards } from '@nestjs/common';
-import { AppService } from './app.service';
 import { genSaltSync, hashSync, compareSync } from 'bcrypt';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as NodeRsa from 'node-rsa';
 import { User } from './model/user.entity';
-import { UserService } from './service/user.service';
+import { UserService } from './modules/user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { JWT_KEY, JWT_EXPIRE } from 'src/constants';
 import { convertToPlainObject } from './util';
@@ -58,31 +57,5 @@ export class AppController {
   submit(@Body() body: any): string {
     Logger.debug(body);
     return '123';
-  }
-
-  @Post('register')
-  async register(@Body() userDto: any) {
-    const salt = genSaltSync(10);
-    const user: User = {
-      id: undefined, salt,
-      username: userDto.username,
-      passwordDigest: hashSync(userDto.password, salt),
-    };
-    const flag = await this.userService.save(user).catch((reason: any) => {
-      return null;
-    });
-    return {valid: flag ? true : false};
-  }
-
-  @Post('login')
-  async login(@Body() userDto: any) {
-    const filter = {username: userDto.username};
-    const u = await this.userService.get(filter);
-    if (u && compareSync(userDto.password, u.passwordDigest)) {
-      return {valid: true, data: {
-        expire: JWT_EXPIRE, token: this.jwtService.sign(convertToPlainObject(u)),
-      }};
-    }
-    return {valid: false};
   }
 }
