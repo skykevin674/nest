@@ -11,9 +11,10 @@ export class DecryptPipe implements PipeTransform<string> {
   async transform(value: string, metadata: ArgumentMetadata) {
     if (metadata.type === 'body' && typeof value === 'string') {
       if (!this.privateKey) {
-        const privatePem = fs.readFileSync(path.join(__dirname, '../../pkcs8_rsa_private_key.pem'));
+        const privatePem = fs.readFileSync(path.join(__dirname, '../../rsa_private_key.pem'));
         const privateStr = privatePem.toString();
         this.privateKey = new NodeRsa(privateStr);
+        this.privateKey.setOptions({ encryptionScheme: 'pkcs1' });
       }
       Logger.debug(value);
       return JSON.parse(this.privateKey.decrypt(value, 'utf8'));

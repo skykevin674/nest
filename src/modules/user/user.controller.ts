@@ -1,4 +1,4 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, Logger, HttpCode } from '@nestjs/common';
 import { User } from 'src/model/user.entity';
 import { genSaltSync, hashSync, compareSync } from 'bcrypt';
 import { UserService } from './user.service';
@@ -19,20 +19,24 @@ export class UserController {
       passwordDigest: hashSync(userDto.password, salt),
     };
     const flag = await this.userService.save(user).catch((reason: any) => {
+      Logger.debug(reason)
       return null;
     });
     return { valid: flag ? true : false };
   }
 
   @Post('login')
+  @HttpCode(200)
   async login(@Body() userDto: any) {
-    const filter = {username: userDto.username};
+    const filter = { username: userDto.username };
     const u = await this.userService.get(filter);
     if (u && compareSync(userDto.password, u.passwordDigest)) {
-      return {valid: true, data: {
-        expire: JWT_EXPIRE, token: this.jwtService.sign(convertToPlainObject(u)),
-      }};
+      return {
+        valid: true, data: {
+          expire: JWT_EXPIRE, token: this.jwtService.sign(convertToPlainObject(u)),
+        }
+      };
     }
-    return {valid: false};
+    return { valid: false };
   }
 }
