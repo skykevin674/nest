@@ -3,10 +3,11 @@ import { AppController } from './app.controller';
 import { TestMiddle } from './test.middle';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './modules/auth/auth.module';
+import { PushModule } from './modules/push/push.module';
 
 @Module({
-  imports: [TypeOrmModule.forRoot(), AuthModule],
-  controllers: [AppController],
+  imports: [TypeOrmModule.forRoot(), AuthModule, PushModule],
+controllers: [AppController],
   providers: [],
 })
 export class AppModule implements NestModule {

@@ -1,10 +1,11 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserController } from './user.controller';
 import { UserService } from 'src/modules/user/user.service';
 import { User } from 'src/model/user.entity';
 import { JwtModule } from '@nestjs/jwt';
 import { JWT_KEY, JWT_EXPIRE } from 'src/constants';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User]), JwtModule.register({
@@ -12,7 +13,7 @@ import { JWT_KEY, JWT_EXPIRE } from 'src/constants';
     signOptions: {
       expiresIn: JWT_EXPIRE,
     },
-  })],
+  }), forwardRef(() => AuthModule)],
   controllers: [UserController],
   providers: [UserService],
   exports: [UserService, JwtModule],

@@ -9,11 +9,9 @@ export class User {
   @Column({ length: 100, nullable: false, unique: true, name: 'username' })
   username: string;
 
-  @Exclude()
   @Column()
   salt: string;
 
-  @Exclude()
   @Column({ length: 255, name: 'password_digest' })
   passwordDigest: string;
 }

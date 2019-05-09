@@ -16,7 +16,6 @@ export class DecryptPipe implements PipeTransform<string> {
         this.privateKey = new NodeRsa(privateStr);
         this.privateKey.setOptions({ encryptionScheme: 'pkcs1' });
       }
-      Logger.debug(value);
       return JSON.parse(this.privateKey.decrypt(value, 'utf8'));
     }
     return value;
